@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Panel principal
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Panel principal
+        </h1>
+
+        <p>
+            Resumen general del sistema comercial.
+        </p>
+
+    </div>
+
+    <a
+        href="{% url 'nueva_venta' %}"
+        class="btn btn-success"
+    >
+        + Nueva venta
+    </a>
+
+</div>
+
+
+<div class="stats">
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Productos
+        </div>
+
+        <div class="stat-value">
+            {{ productos_total }}
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Stock bajo
+        </div>
+
+        <div class="stat-value">
+            {{ productos_stock_bajo|length }}
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Ventas de hoy
+        </div>
+
+        <div class="stat-value">
+            {{ cantidad_ventas_hoy }}
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-title">
+            Facturado hoy
+        </div>
+
+        <div class="stat-value">
+
+            Gs.
+            {{ total_hoy|floatformat:0 }}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Últimas ventas
+    </h2>
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Factura</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for venta in ultimas_ventas %}
+
+                <tr>
+
+                    <td>
+                        {{ venta.numero_factura }}
+                    </td>
+
+                    <td>
+                        {{ venta.fecha|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td>
+                        {{ venta.cliente_nombre }}
+                    </td>
+
+                    <td>
+                        Gs. {{ venta.total|floatformat:0 }}
+                    </td>
+
+                    <td>
+
+                        {% if venta.estado == "COMPLETADA" %}
+
+                            <span class="badge badge-success">
+                                Completada
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-danger">
+                                Anulada
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            class="btn btn-primary"
+                            href="{% url 'factura_venta' venta.id %}"
+                        >
+                            Ver
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6">
+                        Todavía no existen ventas.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% if productos_stock_bajo %}
+
+<div class="card">
+
+    <h2>
+        ⚠ Productos con poco stock
+    </h2>
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Producto</th>
+                    <th>Código</th>
+                    <th>Stock</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for producto in productos_stock_bajo %}
+
+                <tr>
+
+                    <td>
+                        {{ producto.descripcion }}
+                    </td>
+
+                    <td>
+                        {{ producto.codigo_barra }}
+                    </td>
+
+                    <td>
+
+                        <span class="badge badge-warning">
+                            {{ producto.stock }}
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+{% endblock %}

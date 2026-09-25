@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Historial de ventas
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            Historial de ventas
+        </h1>
+
+        <p>
+            Facturas y operaciones realizadas.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'nueva_venta' %}"
+        class="btn btn-success"
+    >
+        + Nueva venta
+    </a>
+
+</div>
+
+
+<div class="card">
+
+    <form method="get">
+
+        <div
+            style="
+                display: flex;
+                gap: 10px;
+            "
+        >
+
+            <input
+                type="text"
+                name="q"
+                value="{{ busqueda }}"
+                placeholder="Buscar cliente, RUC o número de venta..."
+            >
+
+            <button
+                class="btn btn-primary"
+            >
+                Buscar
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<div class="card">
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Factura</th>
+
+                    <th>Fecha</th>
+
+                    <th>Cliente</th>
+
+                    <th>Pago</th>
+
+                    <th>Total</th>
+
+                    <th>Usuario</th>
+
+                    <th>Estado</th>
+
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for venta in ventas %}
+
+                <tr>
+
+                    <td>
+                        {{ venta.numero_factura }}
+                    </td>
+
+                    <td>
+                        {{ venta.fecha|date:"d/m/Y H:i" }}
+                    </td>
+
+                    <td>
+
+                        {{ venta.cliente_nombre }}
+
+                        {% if venta.cliente_ruc %}
+
+                            <br>
+
+                            <small>
+                                RUC:
+                                {{ venta.cliente_ruc }}
+                            </small>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ venta.get_metodo_pago_display }}
+                    </td>
+
+                    <td>
+                        Gs. {{ venta.total|floatformat:0 }}
+                    </td>
+
+                    <td>
+
+                        {% if venta.usuario %}
+
+                            {{ venta.usuario.username }}
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if venta.estado == "COMPLETADA" %}
+
+                            <span class="badge badge-success">
+                                Completada
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-danger">
+                                Anulada
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="acciones">
+
+                            <a
+                                href="{% url 'factura_venta' venta.id %}"
+                                class="btn btn-primary"
+                            >
+                                Factura
+                            </a>
+
+
+                            {% if venta.estado == "COMPLETADA" %}
+
+                            <form
+                                method="post"
+                                action="{% url 'anular_venta' venta.id %}"
+                                onsubmit="
+                                    return confirm(
+                                        '¿Está seguro de anular esta venta? El stock será devuelto.'
+                                    );
+                                "
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    class="btn btn-danger"
+                                    type="submit"
+                                >
+                                    Anular
+                                </button>
+
+                            </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="8">
+
+                        No existen ventas registradas.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

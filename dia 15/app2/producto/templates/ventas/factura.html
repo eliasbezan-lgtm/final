@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Factura {{ venta.numero_factura }}
+{% endblock %}
+
+
+{% block extra_css %}
+
+.factura {
+
+    max-width: 900px;
+
+    margin: auto;
+}
+
+.factura-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    border-bottom:
+        2px solid #111827;
+
+    padding-bottom: 20px;
+
+    margin-bottom: 25px;
+}
+
+.factura-total {
+
+    font-size: 25px;
+
+    font-weight: bold;
+}
+
+.estado-anulada {
+
+    border:
+        4px solid #dc2626;
+
+    color: #dc2626;
+
+    font-size: 32px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+    padding: 10px;
+
+    transform:
+        rotate(-3deg);
+
+    margin-bottom: 20px;
+}
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="factura">
+
+
+<div class="no-print">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                Factura
+            </h1>
+
+        </div>
+
+
+        <div>
+
+            <button
+                onclick="window.print()"
+                class="btn btn-primary"
+            >
+                🖨 Imprimir
+            </button>
+
+            <a
+                href="{% url 'lista_ventas' %}"
+                class="btn btn-secondary"
+            >
+                Volver
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+
+{% if venta.estado == "ANULADA" %}
+
+<div class="estado-anulada">
+
+    VENTA ANULADA
+
+</div>
+
+{% endif %}
+
+
+<div class="factura-header">
+
+    <div>
+
+        <h1>
+            NEXORA MARKET
+        </h1>
+
+        <p>
+            Sistema de gestión comercial
+        </p>
+
+        <p>
+            Paraguay
+        </p>
+
+    </div>
+
+
+    <div>
+
+        <h2>
+            FACTURA
+        </h2>
+
+        <strong>
+            {{ venta.numero_factura }}
+        </strong>
+
+        <p>
+            Fecha:
+            {{ venta.fecha|date:"d/m/Y H:i" }}
+        </p>
+
+    </div>
+
+</div>
+
+
+<h3>
+    Datos del cliente
+</h3>
+
+
+<p>
+
+    <strong>
+        Cliente:
+    </strong>
+
+    {{ venta.cliente_nombre }}
+
+</p>
+
+
+<p>
+
+    <strong>
+        RUC / C.I.:
+    </strong>
+
+    {% if venta.cliente_ruc %}
+
+        {{ venta.cliente_ruc }}
+
+    {% else %}
+
+        -
+
+    {% endif %}
+
+</p>
+
+
+<p>
+
+    <strong>
+        Método de pago:
+    </strong>
+
+    {{ venta.get_metodo_pago_display }}
+
+</p>
+
+
+<br>
+
+
+<div class="table-responsive">
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Producto</th>
+
+            <th>Cantidad</th>
+
+            <th>Precio</th>
+
+            <th>IVA</th>
+
+            <th>Subtotal</th>
+
+            <th>Total</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for detalle in venta.detalles.all %}
+
+        <tr>
+
+            <td>
+                {{ detalle.producto.descripcion }}
+            </td>
+
+            <td>
+                {{ detalle.cantidad }}
+            </td>
+
+            <td>
+                Gs.
+                {{ detalle.precio_unitario|floatformat:0 }}
+            </td>
+
+            <td>
+                {{ detalle.iva }}%
+            </td>
+
+            <td>
+                Gs.
+                {{ detalle.subtotal|floatformat:0 }}
+            </td>
+
+            <td>
+                Gs.
+                {{ detalle.total_linea|floatformat:0 }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+<br>
+
+
+<div
+    style="
+        max-width: 450px;
+        margin-left: auto;
+    "
+>
+
+    <table>
+
+        <tr>
+
+            <td>
+                Subtotal
+            </td>
+
+            <td class="text-right">
+
+                Gs.
+                {{ venta.subtotal|floatformat:0 }}
+
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                IVA
+            </td>
+
+            <td class="text-right">
+
+                Gs.
+                {{ venta.iva_total|floatformat:0 }}
+
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <strong>
+                    TOTAL
+                </strong>
+            </td>
+
+            <td
+                class="
+                    text-right
+                    factura-total
+                "
+            >
+
+                Gs.
+                {{ venta.total|floatformat:0 }}
+
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Pagado
+            </td>
+
+            <td class="text-right">
+
+                Gs.
+                {{ venta.monto_pagado|floatformat:0 }}
+
+            </td>
+
+        </tr>
+
+
+        {% if venta.metodo_pago == "EFECTIVO" %}
+
+        <tr>
+
+            <td>
+                Vuelto
+            </td>
+
+            <td class="text-right">
+
+                Gs.
+                {{ venta.vuelto|floatformat:0 }}
+
+            </td>
+
+        </tr>
+
+        {% endif %}
+
+    </table>
+
+</div>
+
+
+<br><br>
+
+
+<p>
+
+    Atendido por:
+
+    <strong>
+
+        {% if venta.usuario %}
+
+            {{ venta.usuario.username }}
+
+        {% else %}
+
+            Sistema
+
+        {% endif %}
+
+    </strong>
+
+</p>
+
+
+<p
+    style="
+        text-align: center;
+        margin-top: 50px;
+    "
+>
+
+    Gracias por su compra.
+
+</p>
+
+
+</div>
+
+
+</div>
+
+
+{% endblock %}

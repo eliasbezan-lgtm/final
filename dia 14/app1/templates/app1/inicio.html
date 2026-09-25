@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E24 DISTRI PARTS | Sistema de Ventas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --navy:#08111f;--navy2:#0d1b2e;--blue:#1473e6;--cyan:#21b6ff;
+ --green:#12b886;--red:#e5484d;--gold:#f4b942;--ink:#172033;
+ --muted:#64748b;--line:#e5eaf1;--soft:#f5f8fc;--white:#fff;
+}
+body{
+ font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);min-height:100vh;
+ background:
+ radial-gradient(circle at 8% 5%,rgba(33,182,255,.16),transparent 25%),
+ radial-gradient(circle at 92% 90%,rgba(20,115,230,.15),transparent 28%),
+ linear-gradient(135deg,#07101d,#0b1727 50%,#091322);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.topbar{
+ position:sticky;top:0;z-index:20;height:76px;padding:0 4%;
+ display:flex;align-items:center;justify-content:space-between;color:white;
+ background:rgba(7,16,29,.9);backdrop-filter:blur(18px);
+ border-bottom:1px solid rgba(255,255,255,.09)
+}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{
+ width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+ background:linear-gradient(145deg,var(--blue),var(--cyan));font-weight:900;font-size:20px;
+ box-shadow:0 10px 30px rgba(20,115,230,.35)
+}
+.brand h1{font-size:20px;letter-spacing:1.5px}
+.brand h1 span{color:#57c6ff}
+.brand small{display:block;color:#91a3ba;font-size:10px;letter-spacing:2px;margin-top:2px}
+.status{display:flex;align-items:center;gap:8px;color:#b9c6d8;font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:#23d18b;box-shadow:0 0 14px #23d18b}
+.wrap{width:94%;max-width:1400px;margin:32px auto 45px}
+.hero{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px;color:white;gap:20px}
+.hero h2{font-size:32px;letter-spacing:-.7px}
+.hero p{color:#91a3ba;margin-top:7px}
+.badges{display:flex;gap:10px;flex-wrap:wrap}
+.badge{padding:9px 13px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:#c9d6e6;background:rgba(255,255,255,.05);font-size:12px}
+.panel{background:rgba(255,255,255,.98);border-radius:22px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.38)}
+.invoice-head{
+ padding:28px 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;
+ border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff)
+}
+.company{display:flex;align-items:center;gap:15px}
+.company-mark{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;background:var(--navy);color:#5bc8ff;font-size:22px;font-weight:900}
+.company h3{font-size:21px;letter-spacing:.5px}.company p{color:var(--muted);font-size:12px;margin-top:4px}
+.invoice-no{padding:13px 18px;border:1px solid var(--line);border-radius:13px;background:var(--soft);text-align:right}
+.invoice-no small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.invoice-no strong{font-size:20px;color:var(--blue)}
+.content{padding:32px}
+.section{margin-bottom:30px}
+.section-title{display:flex;align-items:center;gap:10px;margin-bottom:17px;font-size:16px}
+.section-title i{font-style:normal;width:31px;height:31px;display:grid;place-items:center;border-radius:9px;background:#eaf4ff;color:var(--blue)}
+.grid{display:grid;grid-template-columns:2fr 1.1fr 1.1fr 1fr;gap:15px}
+.field label{display:block;color:#506078;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select{
+ width:100%;height:45px;border:1px solid var(--line);border-radius:10px;padding:0 12px;
+ background:white;color:var(--ink);outline:none;transition:.2s
+}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(20,115,230,.09)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;min-width:900px;border-collapse:collapse}
+th{background:#f7f9fc;color:#65758b;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.7px;padding:14px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid #edf1f6}
+td input{width:100%;height:39px;border:1px solid var(--line);border-radius:8px;padding:0 9px;outline:none}
+td input:focus{border-color:var(--blue)}
+.amount{font-weight:800;white-space:nowrap}
+.del{width:35px;height:35px;border:0;border-radius:8px;background:#fff0f0;color:var(--red);font-size:19px}
+.del:hover{background:#ffe0e0}
+.add{margin-top:13px;border:1px solid #cfe4ff;background:#edf6ff;color:var(--blue);font-weight:800;padding:10px 15px;border-radius:9px}
+.lower{display:grid;grid-template-columns:1fr 410px;gap:25px}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:15px;padding:21px}
+.pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.pay-grid label{cursor:pointer}.pay-grid input{display:none}
+.pay-grid span{display:block;text-align:center;padding:12px 6px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:13px}
+.pay-grid input:checked+span{border-color:var(--blue);background:#eaf4ff;color:var(--blue);font-weight:800}
+.notes{margin-top:18px}.notes textarea{width:100%;height:92px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:11px;outline:none}
+.summary{background:linear-gradient(145deg,#07111f,#10223a);color:white;border-radius:16px;padding:24px;box-shadow:0 18px 40px rgba(7,17,31,.22)}
+.summary h3{font-size:17px;margin-bottom:18px}
+.row{display:flex;justify-content:space-between;gap:20px;padding:8px 0;color:#b9c7d9;font-size:14px}
+.row strong{color:white}.row.total{margin-top:10px;padding-top:17px;border-top:1px solid #29415f;font-size:24px;color:white}.row.total strong{color:#55c7ff}
+.paybox{margin-top:18px}.paybox label{display:block;color:#aebed1;font-size:12px;margin-bottom:6px}.paybox input{width:100%;height:45px;border:0;border-radius:9px;padding:0 12px;font-size:16px;font-weight:800}
+.change{margin-top:13px;padding-top:13px;border-top:1px solid #29415f;display:flex;justify-content:space-between}.change strong{color:#45df9b}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:27px}
+.btn{border:0;border-radius:10px;padding:13px 19px;font-weight:800}
+.clear{background:#edf1f6;color:#46566c}.print{background:linear-gradient(135deg,var(--blue),#0754bb);color:white;box-shadow:0 9px 24px rgba(20,115,230,.25)}
+.btn:hover{transform:translateY(-1px)}
+.toast{position:fixed;right:24px;bottom:24px;z-index:50;padding:14px 18px;border-radius:12px;background:#092018;color:white;box-shadow:0 15px 35px rgba(0,0,0,.3);display:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px;color:white}
+.stat small{display:block;color:#8fa2ba;font-size:11px}.stat strong{display:block;margin-top:4px;font-size:18px}
+footer{text-align:center;color:#8191a6;padding:22px;font-size:12px}
+@media(max-width:950px){.grid{grid-template-columns:1fr 1fr}.lower{grid-template-columns:1fr}.hero{align-items:start;flex-direction:column}}
+@media(max-width:650px){.topbar{height:auto;padding:13px 18px}.status{display:none}.brand h1{font-size:16px}.wrap{width:96%;margin-top:20px}.hero h2{font-size:25px}.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.content{padding:20px}.invoice-head{padding:20px;align-items:flex-start;flex-direction:column}.actions{flex-direction:column}.btn{width:100%}.pay-grid{grid-template-columns:1fr}}
+@media print{
+ body{background:white}.topbar,.hero,.stats,.add,.actions,footer,.del,.card{display:none!important}
+ .wrap{width:100%;margin:0}.panel{box-shadow:none;border-radius:0}.invoice-head{padding:15px}.content{padding:15px}
+ .summary{background:white;color:black;border:1px solid #ccc;box-shadow:none}.summary h3,.row,.row strong,.row.total,.row.total strong{color:black}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand">
+  <div class="logo">E24</div>
+  <div><h1>E24 <span>DISTRI PARTS</span></h1><small>DISTRIBUCIÓN • REPUESTOS • SOLUCIONES</small></div>
+ </div>
+ <div class="status"><span class="dot"></span> Sistema operativo</div>
+</header>
+
+<main class="wrap">
+ <div class="hero">
+  <div><h2>Centro de facturación</h2><p>Gestión profesional de ventas y comprobantes</p></div>
+  <div class="badges"><span class="badge">● Ventas</span><span class="badge">● Caja</span><span class="badge">● Comprobantes</span></div>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><small>VENTA ACTUAL</small><strong id="statTotal">Gs. 0</strong></div>
+  <div class="stat"><small>PRODUCTOS</small><strong id="statItems">0</strong></div>
+  <div class="stat"><small>HORA</small><strong id="statHora">--:--</strong></div>
+ </div>
+
+ <section class="panel">
+  <div class="invoice-head">
+   <div class="company">
+    <div class="company-mark">E24</div>
+    <div><h3>E24 DISTRI PARTS</h3><p>Distribución y comercialización de repuestos y accesorios</p></div>
+   </div>
+   <div class="invoice-no"><small>Comprobante de venta</small><strong id="numeroFactura">001-000001</strong></div>
+  </div>
+
+  <div class="content">
+   <div class="section">
+    <div class="section-title"><i>01</i><strong>Información del cliente</strong></div>
+    <div class="grid">
+     <div class="field"><label>CLIENTE / RAZÓN SOCIAL</label><input id="cliente" placeholder="Nombre completo o empresa"></div>
+     <div class="field"><label>CI / RUC</label><input id="documento" placeholder="Ej. 80012345-6"></div>
+     <div class="field"><label>TELÉFONO</label><input id="telefono" placeholder="09XX XXX XXX"></div>
+     <div class="field"><label>FECHA Y HORA</label><input id="fecha" readonly></div>
+    </div>
+   </div>
+
+   <div class="section">
+    <div class="section-title"><i>02</i><strong>Detalle de la operación</strong></div>
+    <div class="table-wrap">
+     <table>
+      <thead><tr><th style="width:34%">Producto / repuesto</th><th style="width:12%">Cantidad</th><th style="width:18%">Precio unitario</th><th style="width:18%">Descuento</th><th style="width:14%">Total</th><th style="width:4%"></th></tr></thead>
+      <tbody id="productos"></tbody>
+     </table>
+    </div>
+    <button class="add" onclick="agregarProducto()">＋ Agregar producto</button>
+   </div>
+
+   <div class="lower">
+    <div class="card">
+     <h3>Condiciones de pago</h3>
+     <div class="pay-grid">
+      <label><input type="radio" name="metodo" value="Efectivo" checked onchange="metodoPago()"><span>💵 Efectivo</span></label>
+      <label><input type="radio" name="metodo" value="Tarjeta" onchange="metodoPago()"><span>💳 Tarjeta</span></label>
+      <label><input type="radio" name="metodo" value="Transferencia" onchange="metodoPago()"><span>📱 Transferencia</span></label>
+     </div>
+     <div class="notes"><label class="field"><span style="font-size:12px;font-weight:700;color:#506078">OBSERVACIONES</span><textarea id="observaciones" placeholder="Notas de la venta, entrega, garantía, etc."></textarea></label></div>
+    </div>
+
+    <div class="summary">
+     <h3>Resumen de la venta</h3>
+     <div class="row"><span>Subtotal</span><strong id="subtotal">Gs. 0</strong></div>
+     <div class="row"><span>Descuento</span><strong id="descuento">Gs. 0</strong></div>
+     <div class="row"><span>IVA 10%</span><strong id="iva">Gs. 0</strong></div>
+     <div class="row total"><span>TOTAL</span><strong id="total">Gs. 0</strong></div>
+     <div class="paybox" id="paybox"><label>DINERO RECIBIDO</label><input id="pago" type="number" min="0" placeholder="Ingrese el monto" oninput="calcularVuelto()"></div>
+     <div class="change"><span id="changeLabel">Vuelto</span><strong id="vuelto">Gs. 0</strong></div>
+    </div>
+   </div>
+
+   <div class="actions">
+    <button class="btn clear" onclick="limpiarFactura()">↻ Nueva venta</button>
+    <button class="btn print" onclick="generarFactura()">🖨 Generar comprobante</button>
+   </div>
+  </div>
+ </section>
+ <footer>E24 DISTRI PARTS · Sistema de gestión comercial · 2026</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+let numero=Math.floor(Math.random()*900000)+100000;
+document.getElementById("numeroFactura").textContent="001-"+numero;
+
+function actualizarFecha(){
+ const d=new Date();
+ document.getElementById("fecha").value=d.toLocaleString("es-PY",{dateStyle:"short",timeStyle:"short"});
+ document.getElementById("statHora").textContent=d.toLocaleTimeString("es-PY",{hour:"2-digit",minute:"2-digit"});
+}
+actualizarFecha(); setInterval(actualizarFecha,1000);
+
+function gs(v){return "Gs. "+Math.round(v).toLocaleString("es-PY")}
+function toast(msg){
+ const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";
+ setTimeout(()=>t.style.display="none",2600);
+}
+function filaHTML(){
+ return `<tr>
+ <td><input class="producto" placeholder="Ej. Filtro, pastilla, aceite..."></td>
+ <td><input class="cantidad" type="number" value="1" min="1" oninput="calcular()"></td>
+ <td><input class="precio" type="number" value="0" min="0" oninput="calcular()"></td>
+ <td><input class="descuento" type="number" value="0" min="0" oninput="calcular()" placeholder="Gs."></td>
+ <td class="amount">Gs. 0</td>
+ <td><button class="del" onclick="eliminarProducto(this)">×</button></td>
+ </tr>`;
+}
+function agregarProducto(){
+ document.getElementById("productos").insertAdjacentHTML("beforeend",filaHTML());
+ const filas=document.querySelectorAll("#productos tr");
+ filas[filas.length-1].querySelector(".producto").focus();
+ calcular();
+}
+function eliminarProducto(btn){
+ const filas=document.querySelectorAll("#productos tr");
+ if(filas.length===1){toast("Debe existir al menos un producto.");return}
+ btn.closest("tr").remove();calcular();
+}
+function calcular(){
+ let subtotal=0,descuento=0,items=0;
+ document.querySelectorAll("#productos tr").forEach(f=>{
+  const c=parseFloat(f.querySelector(".cantidad").value)||0;
+  const p=parseFloat(f.querySelector(".precio").value)||0;
+  const d=parseFloat(f.querySelector(".descuento").value)||0;
+  const bruto=c*p, desc=Math.min(d,bruto), neto=bruto-desc;
+  f.querySelector(".amount").textContent=gs(neto);
+  subtotal+=bruto;descuento+=desc;
+  if(f.querySelector(".producto").value.trim() && c>0) items+=c;
+ });
+ const base=Math.max(0,subtotal-descuento),iva=base*.10,total=base+iva;
+ document.getElementById("subtotal").textContent=gs(subtotal);
+ document.getElementById("descuento").textContent=gs(descuento);
+ document.getElementById("iva").textContent=gs(iva);
+ document.getElementById("total").textContent=gs(total);
+ document.getElementById("statTotal").textContent=gs(total);
+ document.getElementById("statItems").textContent=items;
+ calcularVuelto();
+}
+function totalNumero(){
+ return parseFloat(document.getElementById("total").textContent.replace("Gs. ","").replace(/\./g,""))||0;
+}
+function metodoPago(){
+ const m=document.querySelector('input[name="metodo"]:checked').value;
+ const box=document.getElementById("paybox");
+ box.style.display=m==="Efectivo"?"block":"none";
+ if(m!=="Efectivo"){document.getElementById("pago").value="";document.getElementById("vuelto").textContent="No aplica"}
+}
+function calcularVuelto(){
+ if(document.querySelector('input[name="metodo"]:checked').value!=="Efectivo")return;
+ const pago=parseFloat(document.getElementById("pago").value)||0,total=totalNumero();
+ const diferencia=pago-total;
+ document.getElementById("vuelto").textContent=pago?diferencia>=0?gs(diferencia):"Falta "+gs(Math.abs(diferencia)):"Gs. 0";
+ document.getElementById("vuelto").style.color=diferencia>=0?"#45df9b":"#ff8790";
+}
+function generarFactura(){
+ const cliente=document.getElementById("cliente").value.trim();
+ if(!cliente){toast("Ingresá el nombre del cliente.");document.getElementById("cliente").focus();return}
+ let valido=false;
+ document.querySelectorAll("#productos tr").forEach(f=>{
+  const n=f.querySelector(".producto").value.trim(),p=parseFloat(f.querySelector(".precio").value)||0;
+  if(n&&p>0)valido=true;
+ });
+ if(!valido){toast("Agregá al menos un producto con precio.");return}
+ const total=totalNumero();
+ const metodo=document.querySelector('input[name="metodo"]:checked').value;
+ const pago=parseFloat(document.getElementById("pago").value)||0;
+ if(metodo==="Efectivo"&&pago<total){toast("El dinero recibido no alcanza para cubrir el total.");document.getElementById("pago").focus();return}
+ const venta={
+  numero:document.getElementById("numeroFactura").textContent,cliente,
+  documento:document.getElementById("documento").value,telefono:document.getElementById("telefono").value,
+  total,metodo,fecha:new Date().toISOString()
+ };
+ localStorage.setItem("e24_ultima_venta",JSON.stringify(venta));
+ toast("Comprobante listo. Preparando impresión...");
+ setTimeout(()=>window.print(),500);
+}
+function limpiarFactura(){
+ if(confirm("¿Crear una nueva venta? Se limpiarán los datos actuales."))location.reload();
+}
+document.getElementById("productos").innerHTML=filaHTML();
+calcular();
+</script>
+</body>
+</html>
